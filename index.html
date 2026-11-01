@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Coming Soon</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #16191f;
+      --text: #e8eaed;
+      --muted: #9aa0a6;
+      --faint: #6b7178;
+      --accent: #6ea8fe;
+      --border: #272b33;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 50% -10%, #1b2030 0%, var(--bg) 60%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .card {
+      width: 100%;
+      max-width: 620px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 14px;
+      margin-bottom: 26px;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.6;
+      margin-bottom: 44px;
+    }
+    .launch-label {
+      color: var(--faint);
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .date {
+      font-size: clamp(2.4rem, 9vw, 4.2rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 40px;
+    }
+    .countdown {
+      display: flex;
+      gap: 22px;
+      justify-content: center;
+      flex-wrap: wrap;
+      color: var(--faint);
+    }
+    .unit .num {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .unit .label {
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 3px;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="badge">Under Construction</span>
+    <p class="sub">Portfolio website under construction — come back soon.</p>
+
+    <div class="launch-label">Anticipated launch</div>
+    <div class="date" id="date"></div>
+
+    <div class="countdown" id="countdown" aria-live="polite"></div>
+  </main>
+
+  <script>
+    // ─────────────────────────────────────────────
+    // To postpone, change ONLY this line.
+    // Format: (year, monthIndex, day)  — months are 0-based, so 10 = November.
+    const LAUNCH = new Date(2026, 10, 16);
+    // ─────────────────────────────────────────────
+
+    // Everything below derives from LAUNCH automatically.
+    function ordinal(d) {
+      if (d > 3 && d < 21) return d + "th";
+      return d + ({ 1: "st", 2: "nd", 3: "rd" }[d % 10] || "th");
+    }
+    const MONTHS = ["January","February","March","April","May","June",
+                    "July","August","September","October","November","December"];
+    document.getElementById("date").textContent =
+      MONTHS[LAUNCH.getMonth()] + " " + ordinal(LAUNCH.getDate()) + ", " + LAUNCH.getFullYear();
+
+    const units = [
+      { label: "Days", ms: 86400000 },
+      { label: "Hours", ms: 3600000 },
+      { label: "Minutes", ms: 60000 },
+      { label: "Seconds", ms: 1000 }
+    ];
+    function render() {
+      const el = document.getElementById("countdown");
+      let diff = LAUNCH - new Date();
+      if (diff <= 0) {
+        el.innerHTML = '<div class="unit"><div class="num">Live now</div></div>';
+        return;
+      }
+      el.innerHTML = units.map(u => {
+        const val = Math.floor(diff / u.ms);
+        diff -= val * u.ms;
+        return '<div class="unit"><div class="num">' + String(val).padStart(2, "0") +
+               '</div><div class="label">' + u.label + '</div></div>';
+      }).join("");
+    }
+    render();
+    setInterval(render, 1000);
+  </script>
+</body>
+</html>
