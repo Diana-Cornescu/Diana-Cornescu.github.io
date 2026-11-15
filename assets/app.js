@@ -17,6 +17,13 @@
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
+  // Stable URL slug for a project (used by its detail page, cards, gallery).
+  function slugify(s) {
+    return String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+  function projSlug(p) { return slugify(p.slug || p.title); }
+  function projHref(p) { return "project.html?p=" + encodeURIComponent(projSlug(p)); }
+
   /* ---- 1. Fill text + links from config.profile -------------------------- */
   function fillFields() {
     document.querySelectorAll("[data-field]").forEach(function (el) {
@@ -110,7 +117,7 @@
       var tagList = p.tags || [];
       var tags = tagList.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("");
       var dataTags = tagList.map(function (t) { return String(t).toLowerCase(); }).join("|");
-      return '<a class="card" href="' + esc(p.url || "#") + '" data-tags="' + esc(dataTags) + '">' +
+      return '<a class="card" href="' + projHref(p) + '" data-tags="' + esc(dataTags) + '">' +
         '<div class="card-head"><div>' +
           '<div class="card-title">' + esc(p.title) + '</div>' +
           '<div class="card-type">' + esc(p.type || "") + '</div>' +
@@ -126,13 +133,13 @@
       (cfg.projects || []).forEach(function (p) {
         (p.images || []).forEach(function (img) {
           tiles.push(
-            '<figure class="tile">' +
+            '<a class="tile" href="' + projHref(p) + '">' +
               '<img class="tile-img" src="' + esc(img.src) + '" alt="' + esc(img.caption || p.title) + '" loading="lazy">' +
-              '<figcaption class="tile-meta">' +
+              '<div class="tile-meta">' +
                 '<div class="tile-title">' + esc(img.caption || p.title) + '</div>' +
                 '<div class="tile-sub">' + esc(p.title) + (img.kind ? " · " + esc(img.kind) : "") + '</div>' +
-              '</figcaption>' +
-            '</figure>'
+              '</div>' +
+            '</a>'
           );
         });
       });
@@ -175,18 +182,19 @@
   function setupProjectFilters() {
     var bar = document.querySelector('[data-list="project-filters"]');
     if (!bar) return;
-    var skills = cfg.skills || [];
-    var projs = cfg.projects || [];
-    function live(s) {
-      return projs.some(function (p) {
-        return (p.tags || []).some(function (t) { return String(t).toLowerCase() === s.toLowerCase(); });
+    // Toolkit chips are derived straight from the project tags — distinct, in
+    // first-seen order. Add a project with a new tag and a new chip appears
+    // automatically; remove the last project using a tag and its chip is gone.
+    var seen = {}, order = [];
+    (cfg.projects || []).forEach(function (p) {
+      (p.tags || []).forEach(function (t) {
+        var lk = String(t).toLowerCase();
+        if (!seen[lk]) { seen[lk] = true; order.push(String(t)); }
       });
-    }
+    });
     var html = '<button class="filter-chip is-active" data-filter="__all">All</button>';
-    html += skills.map(function (s) {
-      var dead = live(s) ? "" : " is-dead";
-      return '<button class="filter-chip' + dead + '" data-filter="' + esc(s) + '"' +
-        (dead ? ' aria-disabled="true"' : "") + '>' + esc(s) + '</button>';
+    html += order.map(function (t) {
+      return '<button class="filter-chip" data-filter="' + esc(t) + '">' + esc(t) + '</button>';
     }).join("");
     bar.innerHTML = html;
     wireChips(bar, function (active, n) {
@@ -221,6 +229,55 @@
         job.style.display = (n === 0 || anyShown) ? "" : "none";
       });
     }, true);   // single-select: one category at a time (matches Projects)
+  }
+
+  /* ---- 2c. Project detail page (project.html?p=<slug>) -------------------- */
+  function renderProjectDetail() {
+    var root = document.querySelector('[data-detail="project"]');
+    if (!root) return;
+    var want = (new URLSearchParams(location.search).get("p") || "").toLowerCase();
+    var p = (cfg.projects || []).filter(function (x) { return projSlug(x) === want; })[0];
+    if (!p) {
+      document.title = "Diana Cornescu — Project";
+      root.innerHTML = '<a class="back-link" href="projects.html">&larr; All projects</a>' +
+        '<p class="detail-lead">Sorry, that project could not be found. ' +
+        '<a class="inline-link" href="projects.html">Browse all projects</a>.</p>';
+      return;
+    }
+    document.title = "Diana Cornescu — " + p.title;
+    var d = p.details || {};
+    var ICON_EXT = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>';
+    var ICON_GH = '<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>';
+    var links = "";
+    if (p.website) links += '<a class="btn-primary" href="' + esc(p.website) + '" target="_blank" rel="noopener">' + ICON_EXT + ' Live demo</a>';
+    if (p.github)  links += '<a class="btn-secondary" href="' + esc(p.github) + '" target="_blank" rel="noopener">' + ICON_GH + ' GitHub</a>';
+    var tags = (p.tags || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("");
+
+    function section(h, body) { return body ? '<h2 class="detail-h2">' + esc(h) + '</h2>' + body : ""; }
+    function para(t) { return t ? '<p class="detail-p">' + esc(t) + '</p>' : ""; }
+    function bullets(a) {
+      if (!a) return "";
+      if (!Array.isArray(a)) return para(a);
+      return '<ul class="bullets detail-bullets">' + a.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join("") + '</ul>';
+    }
+    var figs = (p.images || []).map(function (img) {
+      return '<figure class="detail-fig">' +
+        '<img src="' + esc(img.src) + '" alt="' + esc(img.caption || p.title) + '" loading="lazy">' +
+        (img.caption ? '<figcaption>' + esc(img.caption) + (img.kind ? " &middot; " + esc(img.kind) : "") + '</figcaption>' : "") +
+      '</figure>';
+    }).join("");
+
+    root.innerHTML =
+      '<a class="back-link" href="projects.html">&larr; All projects</a>' +
+      '<p class="hero-eyebrow">' + esc(p.type || "Project") + '</p>' +
+      '<h1 class="detail-title">' + esc(p.title) + '</h1>' +
+      (d.summary ? '<p class="detail-lead">' + esc(d.summary) + '</p>' : "") +
+      (links ? '<div class="cta-row">' + links + '</div>' : "") +
+      (tags ? '<div class="tags detail-tags">' + tags + '</div>' : "") +
+      section("Why it matters", para(d.why)) +
+      section("What I did", bullets(d.what)) +
+      section("The result", para(d.result)) +
+      (figs ? '<div class="detail-figs">' + figs + '</div>' : "");
   }
 
   /* ---- 3a. Dark / light -------------------------------------------------- */
@@ -455,6 +512,7 @@
     renderLists();
     setupProjectFilters();
     setupExperienceFilters();
+    renderProjectDetail();
     var ct = document.getElementById("collapseToggle");
     if (ct) ct.addEventListener("click", toggleCollapsed);
     var tt = document.getElementById("themeToggle");

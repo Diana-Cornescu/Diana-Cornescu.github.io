@@ -76,7 +76,7 @@ body.collapsed .identity-text { display: none; }
   padding: 10px 12px; border-radius: 10px; font-size: 14.5px;
 }
 .nav-item:hover { background: var(--active-bg); }
-.nav-item.active { background: var(--active-bg); color: var(--accent); }   /* current page */
+.nav-item.active { background: var(--active-bg); color: var(--text); }   /* current page: highlighted, not accent-colored (keeps it readable) */
 .nav-item svg { flex: none; }
 body.collapsed .nav-item { justify-content: center; }
 body.collapsed .nav-item .label { display: none; }
@@ -102,7 +102,10 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
    ========================================================================= */
 .content { margin-left: var(--side-w); transition: margin-left .18s ease; min-height: 100%; }
 .container { max-width: 860px; padding: 46px 52px 90px; }
-.container--wide { max-width: 1150px; }   /* roomier pages (resume, contact) */
+/* Roomier pages (resume, projects, contact): fluid width that fills the screen
+   up to a cap sized for a ~16" laptop, so lines don't run too long on big
+   monitors. Bump the 1400px if you want it wider. */
+.container--wide { max-width: 1400px; }
 
 .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
 .subhead { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 40px 0 16px; }
@@ -150,10 +153,11 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
 /* ---- GALLERY tiles  (resize these without affecting the project cards) -- */
 .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .tile {
-  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
-  background: var(--panel); margin: 0; transition: transform .15s, box-shadow .15s;
+  display: block; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  background: var(--panel); margin: 0; transition: transform .15s, box-shadow .15s, border-color .15s;
 }
-.tile:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.tile:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent); }
+.tile:hover .tile-title { color: var(--accent); }
 .tile-img { height: 150px; width: 100%; object-fit: cover; display: block; background: var(--chip); } /* <- gallery thumb height */
 .tile-meta { padding: 11px 13px; }
 .tile-title { font-size: 13.5px; font-weight: 600; }
@@ -174,7 +178,7 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
 /* ---- Grouped skills (plain-text categorized list in the resume dropdown) - */
 .skill-groups { display: flex; flex-direction: column; gap: 10px; }
 .skillcat { font-size: 14.5px; line-height: 1.6; color: var(--muted); }
-.skillcat-label { font-weight: 600; color: var(--text); }
+.skillcat-label { font-weight: 600; color: var(--accent); }
 .skillcat-items { color: var(--muted); }
 
 /* ---- ACCORDIONS (Education / Experience dropdowns on the resume) --------- */
@@ -209,7 +213,7 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
 .filter-chip.is-dead:hover { border-color: transparent; }
 
 /* ---- CONTACT (full-page layout) ----------------------------------------- */
-.contact-page { padding-top: 64px; }
+.contact-page { padding-top: 64px; max-width: 1120px; }   /* keep contact cards from stretching too wide */
 .contact-intro { max-width: 620px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
 .contact-h1 { font-size: 38px; line-height: 1.12; font-weight: 700; letter-spacing: -.02em; margin: 6px 0 0; }
 .contact-lead { margin: 20px 0 0; font-size: 17px; line-height: 1.65; color: var(--muted); }
@@ -235,6 +239,24 @@ a.contact-method:hover { transform: translateY(-2px); box-shadow: var(--shadow);
 .cm-text { display: flex; flex-direction: column; min-width: 0; }
 .cm-label { font-size: 12.5px; color: var(--muted); }
 .cm-value { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---- PROJECT DETAIL PAGE (project.html — reads like a short blog post) --- */
+.project-detail { max-width: 820px; }   /* narrower than list pages for comfortable reading */
+.back-link { display: inline-block; font-size: 13.5px; color: var(--muted); margin-bottom: 22px; }
+.back-link:hover { color: var(--accent); }
+.inline-link { color: var(--accent); font-weight: 500; }
+.detail-title { font-size: 34px; line-height: 1.14; font-weight: 700; letter-spacing: -.02em; margin: 6px 0 0; }
+.detail-lead { margin: 18px 0 0; font-size: 18px; line-height: 1.6; color: var(--muted); }
+.project-detail .cta-row { margin-top: 24px; }
+.detail-tags { margin-top: 20px; }
+.detail-h2 { font-size: 18px; font-weight: 700; margin: 34px 0 10px; }
+.detail-p { font-size: 15.5px; line-height: 1.7; color: var(--text); margin: 0; }
+.detail-bullets { margin: 10px 0 0; padding-left: 20px; }
+.detail-bullets li { font-size: 15.5px; line-height: 1.65; color: var(--text); margin-bottom: 7px; }
+.detail-figs { margin-top: 36px; display: flex; flex-direction: column; gap: 20px; }
+.detail-fig { margin: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--panel); }
+.detail-fig img { display: block; width: 100%; height: auto; background: var(--chip); }
+.detail-fig figcaption { font-size: 13px; color: var(--muted); padding: 11px 14px; }
 
 /* ---- Responsive: icon rail on small screens ----------------------------- */
 @media (max-width: 760px) {

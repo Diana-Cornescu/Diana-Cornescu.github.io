@@ -48,14 +48,15 @@
        edit the card look/size in styles.css (.card).
        ================================================================== -->
   <div class="content">
-    <div class="container">
+    <div class="container container--wide">
       <h2 class="section-title">Projects</h2>
-      <!-- Skill filter: chips are your skills from config.js; click one to show
-           only projects tagged with it. Skills with no project are dimmed. -->
-      <div class="filter-label">Filter by skill</div>
+      <!-- Toolkit filter: chips are collected automatically from the `tags` on
+           your projects in config.js — add a project with a new tag and a new
+           chip appears here on its own. One toolkit filters at a time. -->
+      <div class="filter-label">Filter by toolkit</div>
       <div class="filterbar" data-list="project-filters"></div>
-      <!-- Cards are built from your projects in config.js. Edit them there;
-           the card look/size is the .card rule in styles.css. -->
+      <!-- Cards are built from your projects in config.js and link to each
+           project's own detail page (project.html). Edit them in config.js. -->
       <div class="cards" data-list="projects"></div>
     </div>
   </div>

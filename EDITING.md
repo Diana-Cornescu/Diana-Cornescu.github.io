@@ -8,11 +8,16 @@ Open `config.js` and edit the values. These are pulled into the pages automatica
 - **Jobs** (title, employer, dates, and bullet points) → `experience`. Each bullet can be a plain string, or `{ text: "...", cats: ["Data Science", "Initiative"] }` so it can be filtered by category on the resume page.
 - **Education** → `education`
 - **Experience filter chips** (the category buttons above Experience) → `experienceFilters`. A bullet's `cats` must match one of these labels exactly.
-- **Skills** → `skills` — these are the clickable chips at the **top of the Projects page**. Clicking one filters the project cards to those whose `tags` match; a skill with no matching project shows dimmed.
+- **Skills (flat list)** → `skills` — shown nowhere directly anymore; kept as a simple reference list. The Projects filter is now built from project `tags` (below), not this list.
+- **Skills (grouped)** → `skillCategories` — the categorized Skills dropdown on the resume page (Languages & Data, GenAI & LLM, …).
 - **Stat chips on the About page** → `profile.stats`
-- **Projects** (title, type, description, tags, link, images) → `projects` — these power both the Projects page and the Gallery. A project's `tags` are also what the skill filter matches on, so keep them spelled like the entries in `skills`.
+- **Projects** → `projects` — these power the Projects page, the Gallery, AND each project's own detail page. Each project has a `slug`, `type`, `description`, optional `github`/`website`, `tags`, `images`, and a `details` block (`summary`, `why`, `what`, `result`) that fills its detail page. Add a project and its card, gallery tiles, filter chip, and detail page all appear automatically.
+- **Project filter ("Filter by toolkit")** — the chips are collected automatically from every project's `tags`. There is no separate list to maintain: add a project with a new tag and a new chip shows up; remove the last project using a tag and its chip disappears. One toolkit filters at a time.
 
-On the **resume page**, Education and Experience are collapsible dropdowns (Education starts closed, Experience open). To change which starts open, add or remove the `open` attribute on the `<details class="acc">` blocks in `resume.html`.
+On the **resume page**, Education, Skills, and Experience are collapsible dropdowns (Education and Skills start closed, Experience open). To change which starts open, add or remove the `open` attribute on the `<details class="acc">` blocks in `resume.html`.
+
+### Project detail pages
+Each project has its own page at `project.html?p=<slug>` — the cards and every gallery tile link there. The page reads like a short write-up (summary → Why it matters → What I did → The result) plus buttons to the GitHub repo and live site. It's one shared template (`project.html`); the content for each project lives in that project's `details` block in `config.js`, so you never create a new HTML file per project — just add the project to `config.js`. If you'd rather each project were a separate hand-written page in a `projects/` folder, that's possible too, but it means a new file (and manual linking) per project; the current setup keeps everything in one data source.
 
 Change any of these in `config.js`, save, refresh the browser.
 
@@ -20,7 +25,8 @@ Change any of these in `config.js`, save, refresh the browser.
 Each page is a normal, self-contained HTML file you can read and edit directly:
 - `index.html` — About / landing
 - `projects.html` — the Projects page (cards are built from the `projects` list in config.js)
-- `gallery.html` — the Gallery (auto-built from the images in your `projects`)
+- `project.html` — the shared template for a single project's detail page (`project.html?p=<slug>`); content comes from that project's `details` in config.js
+- `gallery.html` — the Gallery (auto-built from the images in your `projects`; each tile links to its project page)
 - `resume.html` — resume layout (experience/education/skills *data* comes from config.js)
 - `contact.html` — contact page
 
