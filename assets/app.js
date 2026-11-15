@@ -41,6 +41,19 @@
     document.querySelectorAll('[data-link="linkedin"]').forEach(function (el) {
       if (s.linkedin) el.setAttribute("href", s.linkedin); else el.remove();
     });
+    // Show a cleaned handle for social links (e.g. "github.com/Diana-Cornescu")
+    ["github", "linkedin"].forEach(function (net) {
+      var url = s[net];
+      document.querySelectorAll('[data-social-text="' + net + '"]').forEach(function (el) {
+        if (url) el.textContent = url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+      });
+    });
+    // Hide optional contact rows whose profile value is empty (e.g. phone)
+    document.querySelectorAll("[data-optional-field]").forEach(function (el) {
+      var k = el.getAttribute("data-optional-field");
+      var v = profile[k];
+      if (v == null || String(v).trim() === "") el.style.display = "none";
+    });
   }
 
   /* ---- 2. Render list sections from config ------------------------------- */
@@ -53,7 +66,12 @@
 
     var exp = document.querySelector('[data-list="experience"]');
     if (exp) exp.innerHTML = (cfg.experience || []).map(function (e) {
-      var bullets = (e.bullets || []).map(function (b) { return '<li>' + esc(b) + '</li>'; }).join("");
+      var bullets = (e.bullets || []).map(function (b) {
+        var text = (b && typeof b === "object") ? (b.text || "") : b;
+        var cats = (b && typeof b === "object" && b.cats) ? b.cats : [];
+        var dc = cats.map(function (c) { return String(c).toLowerCase(); }).join("|");
+        return '<li data-cats="' + esc(dc) + '">' + esc(text) + '</li>';
+      }).join("");
       return '<div class="exp">' +
         '<div class="exp-head"><span class="exp-role">' + esc(e.title) + '</span>' +
         '<span class="exp-when">' + esc(e.start) + " — " + esc(e.end) + '</span></div>' +
@@ -77,11 +95,22 @@
       return '<span class="skill">' + esc(s) + '</span>';
     }).join("");
 
+    var skcat = document.querySelector('[data-list="skill-categories"]');
+    if (skcat) skcat.innerHTML = (cfg.skillCategories || []).map(function (g) {
+      var items = (g.items || []).map(function (i) { return esc(i); }).join(", ");
+      return '<div class="skillcat">' +
+        '<span class="skillcat-label">' + esc(g.category) + ':</span> ' +
+        '<span class="skillcat-items">' + items + '</span>' +
+      '</div>';
+    }).join("");
+
     var ARROW = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
     var projects = document.querySelector('[data-list="projects"]');
     if (projects) projects.innerHTML = (cfg.projects || []).map(function (p) {
-      var tags = (p.tags || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("");
-      return '<a class="card" href="' + esc(p.url || "#") + '">' +
+      var tagList = p.tags || [];
+      var tags = tagList.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("");
+      var dataTags = tagList.map(function (t) { return String(t).toLowerCase(); }).join("|");
+      return '<a class="card" href="' + esc(p.url || "#") + '" data-tags="' + esc(dataTags) + '">' +
         '<div class="card-head"><div>' +
           '<div class="card-title">' + esc(p.title) + '</div>' +
           '<div class="card-type">' + esc(p.type || "") + '</div>' +
@@ -109,6 +138,89 @@
       });
       gallery.innerHTML = tiles.join("");
     }
+  }
+
+  /* ---- 2b. Filter chips (projects by skill, experience by category) ------
+     Both bars share the same chip behaviour: an "All" chip plus one chip per
+     item. Click a chip to toggle it; multiple can be active (OR logic). When
+     none are active, everything shows. `apply` decides what to show/hide. ---- */
+  function wireChips(bar, apply, single) {
+    var active = {};   // set of lowercased active filter keys
+    function size() { return Object.keys(active).length; }
+    bar.addEventListener("click", function (ev) {
+      var chip = ev.target.closest(".filter-chip");
+      if (!chip || !bar.contains(chip) || chip.classList.contains("is-dead")) return;
+      var f = chip.getAttribute("data-filter");
+      if (f === "__all") { active = {}; }
+      else {
+        var k = f.toLowerCase();
+        if (single) {
+          // single-select: clicking the active chip clears to "All";
+          // clicking a different chip switches to only that one.
+          if (active[k] && size() === 1) { active = {}; }
+          else { active = {}; active[k] = true; }
+        } else {
+          if (active[k]) delete active[k]; else active[k] = true;
+        }
+      }
+      bar.querySelectorAll(".filter-chip").forEach(function (c) {
+        var cf = c.getAttribute("data-filter");
+        if (cf === "__all") c.classList.toggle("is-active", size() === 0);
+        else c.classList.toggle("is-active", !!active[cf.toLowerCase()]);
+      });
+      apply(active, size());
+    });
+  }
+
+  function setupProjectFilters() {
+    var bar = document.querySelector('[data-list="project-filters"]');
+    if (!bar) return;
+    var skills = cfg.skills || [];
+    var projs = cfg.projects || [];
+    function live(s) {
+      return projs.some(function (p) {
+        return (p.tags || []).some(function (t) { return String(t).toLowerCase() === s.toLowerCase(); });
+      });
+    }
+    var html = '<button class="filter-chip is-active" data-filter="__all">All</button>';
+    html += skills.map(function (s) {
+      var dead = live(s) ? "" : " is-dead";
+      return '<button class="filter-chip' + dead + '" data-filter="' + esc(s) + '"' +
+        (dead ? ' aria-disabled="true"' : "") + '>' + esc(s) + '</button>';
+    }).join("");
+    bar.innerHTML = html;
+    wireChips(bar, function (active, n) {
+      document.querySelectorAll('[data-list="projects"] .card').forEach(function (el) {
+        if (n === 0) { el.style.display = ""; return; }
+        var tags = (el.getAttribute("data-tags") || "").split("|");
+        el.style.display = tags.some(function (t) { return active[t]; }) ? "" : "none";
+      });
+    }, true);   // single-select: one skill at a time
+  }
+
+  function setupExperienceFilters() {
+    var bar = document.querySelector('[data-list="exp-filters"]');
+    if (!bar) return;
+    var cats = cfg.experienceFilters || [];
+    if (!cats.length) { bar.style.display = "none"; return; }
+    var html = '<button class="filter-chip is-active" data-filter="__all">All</button>';
+    html += cats.map(function (c) {
+      return '<button class="filter-chip" data-filter="' + esc(c) + '">' + esc(c) + '</button>';
+    }).join("");
+    bar.innerHTML = html;
+    wireChips(bar, function (active, n) {
+      document.querySelectorAll('[data-list="experience"] .exp').forEach(function (job) {
+        var anyShown = false;
+        job.querySelectorAll(".bullets li").forEach(function (li) {
+          if (n === 0) { li.style.display = ""; anyShown = true; return; }
+          var lcats = (li.getAttribute("data-cats") || "").split("|");
+          var show = lcats.some(function (c) { return active[c]; });
+          li.style.display = show ? "" : "none";
+          if (show) anyShown = true;
+        });
+        job.style.display = (n === 0 || anyShown) ? "" : "none";
+      });
+    }, true);   // single-select: one category at a time (matches Projects)
   }
 
   /* ---- 3a. Dark / light -------------------------------------------------- */
@@ -341,6 +453,8 @@
   function boot() {
     fillFields();
     renderLists();
+    setupProjectFilters();
+    setupExperienceFilters();
     var ct = document.getElementById("collapseToggle");
     if (ct) ct.addEventListener("click", toggleCollapsed);
     var tt = document.getElementById("themeToggle");

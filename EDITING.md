@@ -5,11 +5,14 @@ The site is plain HTML/CSS/JS. Here's where each kind of change lives.
 ## Your personal info → `config.js`
 Open `config.js` and edit the values. These are pulled into the pages automatically:
 - **Name, role, location, email, phone, bio, social links, resume path** → `profile`
-- **Jobs** (title, employer, dates, and bullet points) → `experience`
+- **Jobs** (title, employer, dates, and bullet points) → `experience`. Each bullet can be a plain string, or `{ text: "...", cats: ["Data Science", "Initiative"] }` so it can be filtered by category on the resume page.
 - **Education** → `education`
-- **Skills** → `skills`
+- **Experience filter chips** (the category buttons above Experience) → `experienceFilters`. A bullet's `cats` must match one of these labels exactly.
+- **Skills** → `skills` — these are the clickable chips at the **top of the Projects page**. Clicking one filters the project cards to those whose `tags` match; a skill with no matching project shows dimmed.
 - **Stat chips on the About page** → `profile.stats`
-- **Projects** (title, type, description, tags, link, images) → `projects` — these power both the Projects page and the Gallery
+- **Projects** (title, type, description, tags, link, images) → `projects` — these power both the Projects page and the Gallery. A project's `tags` are also what the skill filter matches on, so keep them spelled like the entries in `skills`.
+
+On the **resume page**, Education and Experience are collapsible dropdowns (Education starts closed, Experience open). To change which starts open, add or remove the `open` attribute on the `<details class="acc">` blocks in `resume.html`.
 
 Change any of these in `config.js`, save, refresh the browser.
 

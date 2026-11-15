@@ -102,6 +102,7 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
    ========================================================================= */
 .content { margin-left: var(--side-w); transition: margin-left .18s ease; min-height: 100%; }
 .container { max-width: 860px; padding: 46px 52px 90px; }
+.container--wide { max-width: 1150px; }   /* roomier pages (resume, contact) */
 
 .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
 .subhead { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 40px 0 16px; }
@@ -170,12 +171,70 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
 .skill-chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .skill { font-size: 13px; background: var(--chip); color: var(--chip-text); padding: 6px 12px; border-radius: 7px; }
 
-/* ---- CONTACT ------------------------------------------------------------ */
-.contact-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 28px; max-width: 560px; }
-.contact-grid { display: flex; gap: 40px; flex-wrap: wrap; font-size: 14.5px; margin-bottom: 22px; }
-.contact-label { color: var(--muted); font-size: 12.5px; margin-bottom: 4px; }
-.contact-links { display: flex; gap: 18px; margin-top: 18px; }
-.contact-links a { color: var(--accent); font-weight: 500; }
+/* ---- Grouped skills (plain-text categorized list in the resume dropdown) - */
+.skill-groups { display: flex; flex-direction: column; gap: 10px; }
+.skillcat { font-size: 14.5px; line-height: 1.6; color: var(--muted); }
+.skillcat-label { font-weight: 600; color: var(--text); }
+.skillcat-items { color: var(--muted); }
+
+/* ---- ACCORDIONS (Education / Experience dropdowns on the resume) --------- */
+.acc {
+  border: 1px solid var(--border); border-radius: 12px;
+  background: var(--panel); margin-bottom: 16px; overflow: hidden;
+}
+.acc-head {
+  list-style: none; cursor: pointer; user-select: none;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 16px 20px;
+}
+.acc-head::-webkit-details-marker { display: none; }   /* hide default triangle */
+.acc-title { font-size: 16px; font-weight: 700; }
+.acc-chevron { color: var(--muted); display: flex; transition: transform .18s ease; }
+.acc[open] .acc-chevron { transform: rotate(90deg); }
+.acc-head:hover { background: var(--active-bg); }
+.acc-body { padding: 4px 20px 22px; }
+.acc-body .timeline { margin-top: 4px; }
+
+/* ---- FILTER CHIPS (skill filter on Projects, category filter on Resume) -- */
+.filter-label { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+.filterbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 2px 0 20px; }
+.filter-chip {
+  font-size: 13px; background: var(--chip); color: var(--chip-text);
+  padding: 6px 12px; border-radius: 7px; border: 1px solid transparent;
+  cursor: pointer; transition: background .15s, color .15s, border-color .15s;
+}
+.filter-chip:hover { border-color: var(--accent); }
+.filter-chip.is-active { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+.filter-chip.is-dead { opacity: .4; cursor: default; }
+.filter-chip.is-dead:hover { border-color: transparent; }
+
+/* ---- CONTACT (full-page layout) ----------------------------------------- */
+.contact-page { padding-top: 64px; }
+.contact-intro { max-width: 620px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.contact-h1 { font-size: 38px; line-height: 1.12; font-weight: 700; letter-spacing: -.02em; margin: 6px 0 0; }
+.contact-lead { margin: 20px 0 0; font-size: 17px; line-height: 1.65; color: var(--muted); }
+.contact-lead [data-field="location"] { color: var(--text); font-weight: 500; }
+
+.contact-methods {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px; margin-top: 40px;
+}
+.contact-method {
+  display: flex; align-items: center; gap: 15px;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 20px;
+  transition: box-shadow .15s, transform .15s, border-color .15s;
+}
+a.contact-method:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent); }
+.contact-method.is-static { cursor: default; }
+.cm-icon {
+  width: 42px; height: 42px; flex: none; border-radius: 11px;
+  background: var(--active-bg); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+}
+.cm-text { display: flex; flex-direction: column; min-width: 0; }
+.cm-label { font-size: 12.5px; color: var(--muted); }
+.cm-value { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ---- Responsive: icon rail on small screens ----------------------------- */
 @media (max-width: 760px) {
@@ -183,8 +242,13 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
   .identity-text, .nav-item .label, .side-bottom .label { display: none; }
   .nav-item, .ghost-btn, .accent-btn, .identity, .side-top { justify-content: center; }
   .container { padding: 32px 22px 70px; }
-  .stats, .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .contact-page { padding-top: 40px; }
+  .stats, .gallery, .contact-methods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-title { font-size: 32px; }
+  .contact-h1 { font-size: 30px; }
+}
+@media (max-width: 520px) {
+  .contact-methods { grid-template-columns: 1fr; }
 }
 
 /* =========================================================================
