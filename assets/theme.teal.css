@@ -1,0 +1,18 @@
+/* Teal palette.
+   The ACTIVE palette is whichever file is named theme.css.
+   To switch: delete the current theme.css, then rename the palette you want
+   (e.g. theme.teal.css) to theme.css. The neutrals are shared across
+   palettes; each palette's signature is its --accent color. */
+:root {
+  --bg: #F6F7F9; --panel: #FFFFFF; --side: #FFFFFF;
+  --border: #EAECEF; --text: #111827; --muted: #6B7280;
+  --chip: #F3F4F6; --chip-text: #4B5563;
+  --accent: #0F766E; --accent-contrast: #FFFFFF; --active-bg: #DEF1EE;
+  --shadow: 0 8px 24px rgba(15, 23, 42, .08);
+}
+html[data-theme="dark"] {
+  --bg: #0E1116; --panel: #161A21; --side: #12161C;
+  --border: #232A34; --text: #E6E9EF; --muted: #9AA4B2;
+  --chip: #1E242D; --chip-text: #8FA0B4; --active-bg: #11312D;
+  --shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}

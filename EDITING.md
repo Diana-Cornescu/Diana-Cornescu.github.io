@@ -4,7 +4,7 @@ The site is plain HTML/CSS/JS. Here's where each kind of change lives.
 
 ## Your personal info → `config.js`
 Open `config.js` and edit the values. These are pulled into the pages automatically:
-- **Name, role, location, email, phone, bio, social links, résumé path** → `profile`
+- **Name, role, location, email, phone, bio, social links, resume path** → `profile`
 - **Jobs** (title, employer, dates, and bullet points) → `experience`
 - **Education** → `education`
 - **Skills** → `skills`
@@ -18,27 +18,50 @@ Each page is a normal, self-contained HTML file you can read and edit directly:
 - `index.html` — About / landing
 - `projects.html` — the Projects page (cards are built from the `projects` list in config.js)
 - `gallery.html` — the Gallery (auto-built from the images in your `projects`)
-- `resume.html` — résumé layout (experience/education/skills *data* comes from config.js)
+- `resume.html` — resume layout (experience/education/skills *data* comes from config.js)
 - `contact.html` — contact page
 
-Projects and the résumé are **data in config.js** rendered into these pages;
+Projects and the resume are **data in config.js** rendered into these pages;
 the headings, layout, and styling are in the HTML/CSS.
 
 The sidebar markup appears at the top of every page (that's normal for a static
 site). Your **name/role** in it come from `config.js`, so you only change those
 once; if you change the **nav links or sidebar layout**, do it in each page.
 
-## Sizes, spacing, colors → `assets/styles.css`
+## Sizes & spacing → `assets/styles.css`
 Organized by section with comments. A few handy ones:
-- Accent color: `--accent` near the top
 - **Project box size**: the `.card` rule
 - **Gallery thumbnail size**: the `.tile-img` rule (these are separate, so you can
   resize one without touching the other)
 - Sidebar width: `--side-w` / `--side-w-collapsed`
 
+## Color theme & font
+**Design page:** click **Design** in the sidebar (just above Dark mode). Tune the
+accent, hover/highlight, background, surface, text, muted text, borders, and the
+font — **separately for light and dark mode** (toggle at the top). Changes apply
+live across every page and are saved in your browser.
+
+**Make it the default for everyone:** the Design page has a "Copy CSS" box at the
+bottom that generates a ready-to-paste `theme.css` from your current choices.
+Paste it into **`assets/theme.css`** (or send it to Claude). You can also edit
+`--accent` in `theme.css` directly, or swap in a ready-made palette in `assets/`:
+
+- `theme.indigo.css` (the default)
+- `theme.teal.css`
+- `theme.violet.css`
+- `theme.sunset.css`
+- `theme.forest.css`
+
+**To switch the whole site's colors:** delete `assets/theme.css`, then rename the
+palette you want (e.g. `theme.teal.css`) to `theme.css`. Refresh — done. Each
+palette includes both light and dark mode, so dark/light keeps working either way.
+(Prefer not to rename? You can instead copy a palette file's contents into
+`theme.css`.) To hand-tweak colors, edit the `--accent` and other variables inside
+whichever file is currently `theme.css`.
+
 ## `assets/app.js`
 Small helper that (1) drops your `config.js` details into the pages, (2) builds the
-résumé lists, and (3) runs the dark/light toggle + collapsible sidebar. You rarely
+resume lists, and (3) runs the dark/light toggle + collapsible sidebar. You rarely
 need to touch it.
 
 ## Adding a project image
@@ -47,7 +70,7 @@ need to touch it.
    `{ src: "assets/img/churn.png", caption: "Churn dashboard", kind: "chart" }`
 It then appears in the Gallery automatically — no second step.
 
-## Adding your résumé PDF
+## Adding your resume PDF
 Drop `resume.pdf` into `assets/` (or change `profile.resumeFile` in `config.js`).
 
 ## Run locally

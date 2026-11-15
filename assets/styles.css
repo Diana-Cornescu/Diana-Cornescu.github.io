@@ -9,35 +9,13 @@
      • Gallery tiles  ->  .tile / .tile-img   (e.g. .tile-img height)
    ========================================================================== */
 
-/* ---- Theme colors (light = default, dark = [data-theme="dark"]) ---------- */
+/* ---- Colors live in a swappable palette file: assets/theme.css ----------
+   To change the whole color scheme, pick a different palette (there are
+   several ready-made ones in assets/ named theme.<name>.css). See EDITING.md.
+   Only layout variables live here. ---------------------------------------- */
 :root {
-  --bg: #F6F7F9;
-  --panel: #FFFFFF;
-  --side: #FFFFFF;
-  --border: #EAECEF;
-  --text: #111827;
-  --muted: #6B7280;
-  --chip: #F3F4F6;
-  --chip-text: #4B5563;
-  --accent: #2563EB;              /* <- change the accent color here */
-  --accent-contrast: #FFFFFF;
-  --active-bg: #EEF2FF;
-  --shadow: 0 8px 24px rgba(15, 23, 42, .08);
-
   --side-w: 250px;                /* sidebar width when expanded */
   --side-w-collapsed: 76px;       /* sidebar width when collapsed */
-}
-html[data-theme="dark"] {
-  --bg: #0E1116;
-  --panel: #161A21;
-  --side: #12161C;
-  --border: #232A34;
-  --text: #E6E9EF;
-  --muted: #9AA4B2;
-  --chip: #1E242D;
-  --chip-text: #8FA0B4;
-  --active-bg: #1E242D;
-  --shadow: 0 8px 24px rgba(0, 0, 0, .35);
 }
 
 * { box-sizing: border-box; }
@@ -46,7 +24,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family: var(--font, Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif);
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; text-decoration: none; }
@@ -180,7 +158,7 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
 .tile-title { font-size: 13.5px; font-weight: 600; }
 .tile-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-/* ---- RÉSUMÉ (experience / education / skills) --------------------------- */
+/* ---- RESUME (experience / education / skills) --------------------------- */
 .timeline { display: flex; flex-direction: column; gap: 22px; }
 .exp-head { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
 .exp-role { font-size: 16px; font-weight: 700; }
@@ -208,3 +186,62 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
   .stats, .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-title { font-size: 32px; }
 }
+
+/* =========================================================================
+   LIVE COLOR PICKER  (floating button + slide-out panel)
+   ========================================================================= */
+.tp-fab {
+  position: fixed; right: 20px; bottom: 20px; z-index: 50;
+  width: 46px; height: 46px; border-radius: 50%; border: none;
+  background: var(--accent); color: var(--accent-contrast);
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; justify-content: center;
+}
+.tp-fab:hover { filter: brightness(1.06); }
+
+.tp-backdrop {
+  position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .28);
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.tp-backdrop.open { opacity: 1; pointer-events: auto; }
+
+.tp-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 51;
+  width: 300px; max-width: 86vw; box-sizing: border-box; padding: 22px;
+  background: var(--panel); border-left: 1px solid var(--border);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, .14);
+  transform: translateX(100%); transition: transform .22s ease;
+  overflow-y: auto;
+}
+.tp-panel.open { transform: translateX(0); }
+.tp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.tp-title { font-size: 16px; font-weight: 700; }
+.tp-close { background: transparent; border: none; color: var(--muted); font-size: 22px; line-height: 1; padding: 0 4px; }
+.tp-plabel { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 20px 0 10px; }
+.tp-swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.tp-swatch { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--border); padding: 0; cursor: pointer; }
+.tp-swatch.sel { outline: 2px solid var(--text); outline-offset: 2px; }
+.tp-row { display: flex; align-items: center; gap: 12px; }
+.tp-color { width: 46px; height: 34px; border: 1px solid var(--border); border-radius: 8px; background: none; padding: 2px; cursor: pointer; }
+.tp-hex { font-size: 13px; color: var(--muted); font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.tp-reset { margin-top: 24px; width: 100%; border: 1px solid var(--border); background: transparent; color: var(--text); padding: 9px; border-radius: 9px; font-size: 13.5px; cursor: pointer; }
+.tp-reset:hover { background: var(--active-bg); }
+.tp-note { font-size: 12px; color: var(--muted); margin: 0 0 6px; }
+.tp-modes { display: flex; gap: 8px; }
+.tp-mode { flex: 1; border: 1px solid var(--border); background: transparent; color: var(--text); padding: 7px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.tp-mode.on { background: var(--active-bg); color: var(--accent); border-color: var(--accent); }
+.tp-select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel); color: var(--text); font-size: 13.5px; }
+.tp-field { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.tp-field label { font-size: 13px; color: var(--text); }
+.tp-field-right { display: flex; align-items: center; gap: 8px; }
+
+/* Design page container + publish box */
+.ghost-btn.on { background: var(--active-bg); color: var(--accent); border-color: var(--accent); }
+#designRoot { max-width: 460px; }
+.tp-out { width: 100%; box-sizing: border-box; margin-top: 4px; min-height: 220px; resize: vertical;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; line-height: 1.5;
+  border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: var(--chip); color: var(--text); }
+.tp-copy { margin-top: 10px; border: none; background: var(--accent); color: var(--accent-contrast);
+  padding: 9px 18px; border-radius: 9px; font-size: 13.5px; cursor: pointer; }
+.tp-copy:hover { filter: brightness(1.05); }
+.tp-copied { font-size: 13px; color: var(--accent); margin-left: 10px; }

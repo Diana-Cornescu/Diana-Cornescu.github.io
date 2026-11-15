@@ -2,7 +2,7 @@
    config.js — YOUR PERSONAL INFORMATION, in one place.
 
    This file holds ONLY personal data: your name, contact details, and your
-   résumé (jobs, school, skills). Change a value here and it updates wherever
+   resume (jobs, school, skills). Change a value here and it updates wherever
    that detail appears across the site.
 
    Everything else — the page layout, the project cards, the gallery, box
