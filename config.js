@@ -1,34 +1,41 @@
 /* =============================================================================
-   config.js — THE ONE PLACE TO EDIT.
-   Change anything here and it updates across every page automatically.
-   Right now everything is PLACEHOLDER / FAKE. Replace the values, then publish.
-   Nothing else in the site should need editing for normal content changes.
+   config.js — YOUR PERSONAL INFORMATION, in one place.
+
+   This file holds ONLY personal data: your name, contact details, and your
+   résumé (jobs, school, skills). Change a value here and it updates wherever
+   that detail appears across the site.
+
+   Everything else — the page layout, the project cards, the gallery, box
+   sizes, colors — lives in the actual HTML/CSS files, which you edit directly:
+     • Structure/content of a page  ->  that page's .html file
+     • Sizes, spacing, colors       ->  assets/styles.css
+   This file does NOT control layout.
    ========================================================================== */
 
 window.SITE_CONFIG = {
 
-  /* --- Who you are (shows in sidebar, hero, contact, page titles) --------- */
+  /* --- Basic details ------------------------------------------------------ */
   profile: {
     name: "Diana Cornescu",
-    initials: "DC",                 // shown in the little avatar square
-    role: "Data Analyst",
+    initials: "DC",                       // the little avatar square in the sidebar
+    role: "Data Analyst",                 // shows under your name + in the hero
     location: "Toronto, Canada",
     email: "hello@example.com",
     phone: "+1 (555) 123-4567",
-    // The short line under your name + the longer intro on the About page:
-    tagline: "I turn messy data into decisions people can act on.",
+
+    tagline: "I turn messy data into decisions people can act on.",  // big hero headline
     intro:
       "Placeholder intro paragraph. A few sentences about who you are and the " +
-      "problems you like to solve — the first thing a recruiter reads. Replace " +
-      "this text; it lives only here.",
-    // Links. Leave a value as "" to hide that link everywhere.
+      "problems you like to solve — the first thing a recruiter reads.",
+
     social: {
       github: "https://github.com/Diana-Cornescu",
       linkedin: "https://www.linkedin.com/in/your-handle",
     },
-    // Path to your résumé PDF (drop the file in /assets and update this):
-    resumeFile: "assets/resume.pdf",
-    // Little stat chips on the About page. Add/remove freely.
+
+    resumeFile: "assets/resume.pdf",      // drop your PDF in /assets and keep this path
+
+    // Small stat chips on the About page. Add/remove freely.
     stats: [
       { value: "3+ yrs", label: "in analytics" },
       { value: "12", label: "projects shipped" },
@@ -36,91 +43,89 @@ window.SITE_CONFIG = {
     ],
   },
 
-  /* --- Résumé: experience, education, skills ------------------------------ */
+  /* --- Work experience ----------------------------------------------------
+     One entry per workplace. `bullets` is a list — add as many as you like.
+     ---------------------------------------------------------------------- */
   experience: [
     {
-      role: "Data Analyst",
+      title: "Data Analyst",
       org: "Acme Analytics",
       start: "2024",
-      end: "now",
-      summary: "Placeholder — what you did and the measurable impact in one line.",
+      end: "Present",
+      bullets: [
+        "Placeholder bullet — a result you drove, with a number if you have one.",
+        "Placeholder bullet — a tool you used or a thing you built.",
+        "Placeholder bullet — scope, stakeholders, or impact.",
+      ],
     },
     {
-      role: "Analytics Intern",
+      title: "Analytics Intern",
       org: "DataCorp",
       start: "2023",
       end: "2024",
-      summary: "Placeholder — what you did and the measurable impact in one line.",
+      bullets: [
+        "Placeholder bullet — what you contributed.",
+        "Placeholder bullet — a measurable outcome.",
+      ],
     },
   ],
 
+  /* --- Education ----------------------------------------------------------- */
   education: [
     {
       degree: "BSc, Placeholder Field",
       org: "University of Somewhere",
       start: "2019",
       end: "2023",
+      note: "",   // optional: honours, GPA, relevant coursework
     },
   ],
 
+  /* --- Skills (shown as chips) -------------------------------------------- */
   skills: ["Python", "SQL", "Pandas", "Tableau", "dbt", "Airflow", "Git", "scikit-learn"],
 
   /* --- Projects -----------------------------------------------------------
-     Each project lists its own images. The GALLERY page is built automatically
-     from every image across every project — so you add an image ONCE here and
-     it shows up in both the project and the gallery. No duplication.
-     kind: "chart" or "diagram" (just a small label under the gallery thumb).
+     These power BOTH the Projects page AND the Gallery. Each project lists its
+     own images; the Gallery is built automatically from every image across all
+     projects, so you add an image ONCE here and it shows up in both places.
+     (The look of the cards/tiles is still CSS: .card and .tile in styles.css.)
+       type: a short label shown under the title (e.g. "Dashboard")
+       url:  link to a repo, write-up, or live demo (use "#" for none)
+       kind: "chart" or "diagram" — a small label under the gallery thumbnail
      ---------------------------------------------------------------------- */
   projects: [
     {
-      id: "churn",
       title: "Churn Early-Warning Dashboard",
       type: "Dashboard",
-      description:
-        "Placeholder description — the problem, what you built, and the outcome in a sentence or two.",
+      description: "Placeholder description — the problem, what you built, and the outcome in a sentence or two.",
+      url: "#",
       tags: ["Python", "dbt", "Looker"],
-      url: "#", // link to a repo, write-up, or live demo
       images: [
         { src: "assets/img/placeholder-bars.svg", caption: "Churn dashboard", kind: "chart" },
         { src: "assets/img/placeholder-line.svg", caption: "Retention trend", kind: "chart" },
       ],
     },
     {
-      id: "forecast",
       title: "Demand Forecasting Pipeline",
       type: "ML model",
-      description:
-        "Placeholder description — swap in a real project when you have one ready to show.",
-      tags: ["scikit-learn", "Airflow"],
+      description: "Placeholder description — swap in a real project when you have one ready to show.",
       url: "#",
+      tags: ["scikit-learn", "Airflow"],
       images: [
         { src: "assets/img/placeholder-flow.svg", caption: "Pipeline architecture", kind: "diagram" },
         { src: "assets/img/placeholder-line.svg", caption: "Forecast vs actual", kind: "chart" },
       ],
     },
     {
-      id: "pricing",
       title: "Retail Pricing Study",
       type: "Analysis",
-      description:
-        "Placeholder description of a notebook or write-up you want to feature.",
-      tags: ["SQL", "Tableau"],
+      description: "Placeholder description of a notebook or write-up you want to feature.",
       url: "#",
+      tags: ["SQL", "Tableau"],
       images: [
         { src: "assets/img/placeholder-scatter.svg", caption: "Price elasticity", kind: "chart" },
         { src: "assets/img/placeholder-bars.svg", caption: "Category margins", kind: "chart" },
       ],
     },
-  ],
-
-  /* --- Navigation ---------------------------------------------------------
-     Order + labels of the sidebar items. Usually no need to touch this.
-     ---------------------------------------------------------------------- */
-  nav: [
-    { id: "about", label: "About", href: "index.html", icon: "user" },
-    { id: "projects", label: "Projects", href: "projects.html", icon: "grid" },
-    { id: "gallery", label: "Gallery", href: "gallery.html", icon: "image" },
-    { id: "resume", label: "Résumé", href: "resume.html", icon: "file" },
-    { id: "contact", label: "Contact", href: "contact.html", icon: "mail" },
   ],
 };
