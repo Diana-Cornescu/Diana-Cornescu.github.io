@@ -33,6 +33,11 @@ Each page is a normal, self-contained HTML file you can read and edit directly:
 Projects and the resume are **data in config.js** rendered into these pages;
 the headings, layout, and styling are in the HTML/CSS.
 
+### Navigation & the front-page scrolling band
+The navigation is a **top bar** (`.topbar`) that's identical on every page — page links on the left, dark-mode toggle + Resume + Design on the right. If you add or rename a page, update that top bar in each HTML file (it's the same block everywhere; the current page's link has `class="nav-item active"`).
+
+The front page (`index.html`) has an **auto-scrolling image band** above the hero (`<section class="strip">`). It's filled automatically from every project image in `config.js` and each image links to its project page — so adding project images updates the band too. Speed/size live in the `.strip` rules in `styles.css` (the `strip-scroll` animation is 60s; lower it to scroll faster). It pauses on hover and stops entirely for visitors who prefer reduced motion.
+
 The sidebar markup appears at the top of every page (that's normal for a static
 site). Your **name/role** in it come from `config.js`, so you only change those
 once; if you change the **nav links or sidebar layout**, do it in each page.

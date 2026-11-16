@@ -106,7 +106,7 @@
     if (skcat) skcat.innerHTML = (cfg.skillCategories || []).map(function (g) {
       var items = (g.items || []).map(function (i) { return esc(i); }).join(", ");
       return '<div class="skillcat">' +
-        '<span class="skillcat-label">' + esc(g.category) + ':</span> ' +
+        '<span class="skillcat-label">' + esc(g.category) + '</span>' +
         '<span class="skillcat-items">' + items + '</span>' +
       '</div>';
     }).join("");
@@ -144,6 +144,29 @@
         });
       });
       gallery.innerHTML = tiles.join("");
+    }
+
+    // Auto-scrolling horizontal image band (front page only). Built from the
+    // same project images; each links to its project page. The set is doubled
+    // so the CSS marquee can loop seamlessly (it slides exactly one set width).
+    var strip = document.querySelector('[data-strip="gallery"]');
+    if (strip) {
+      var items = [];
+      (cfg.projects || []).forEach(function (p) {
+        (p.images || []).forEach(function (img) {
+          items.push(
+            '<a class="strip-item" href="' + projHref(p) + '" title="' + esc(p.title) + '" aria-label="' + esc(p.title) + '">' +
+              '<img src="' + esc(img.src) + '" alt="' + esc(img.caption || p.title) + '" loading="lazy">' +
+            '</a>'
+          );
+        });
+      });
+      if (items.length) {
+        strip.innerHTML = items.join("") + items.join("");   // doubled for a seamless loop
+      } else {
+        var band = strip.closest(".strip");
+        if (band) band.style.display = "none";
+      }
     }
   }
 
