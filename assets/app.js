@@ -254,6 +254,34 @@
     }, true);   // single-select: one category at a time (matches Projects)
   }
 
+  /* ---- 2d. Skill cloud (resume banner; size = confidence, filter by area) - */
+  function setupSkillCloud() {
+    var cloud = document.querySelector('[data-list="skill-cloud"]');
+    if (!cloud) return;
+    cloud.innerHTML = (cfg.skillCloud || []).map(function (s) {
+      var lvl = Math.min(3, Math.max(1, s.level || 2));
+      var dc = (s.cats || []).map(function (c) { return String(c).toLowerCase(); }).join("|");
+      return '<span class="cloud-skill lvl-' + lvl + '" data-cats="' + esc(dc) + '">' + esc(s.name) + '</span>';
+    }).join("");
+
+    var bar = document.querySelector('[data-list="skillcloud-filters"]');
+    if (!bar) return;
+    var filters = cfg.skillCloudFilters || [];
+    // No "All" chip — clicking the active chip again clears back to all skills.
+    bar.innerHTML = filters.map(function (f) {
+      return '<button class="filter-chip" data-filter="' + esc(f) + '">' + esc(f) + '</button>';
+    }).join("");
+    wireChips(bar, function (active, n) {
+      // All skills always stay visible; the active focus area's skills are
+      // highlighted (accent) and the rest are dimmed (muted) — nothing hides.
+      cloud.querySelectorAll(".cloud-skill").forEach(function (el) {
+        if (n === 0) { el.classList.remove("is-dim"); return; }
+        var cats = (el.getAttribute("data-cats") || "").split("|");
+        el.classList.toggle("is-dim", !cats.some(function (c) { return active[c]; }));
+      });
+    }, true);   // single-select: one focus area at a time
+  }
+
   /* ---- 2c. Project detail page (project.html?p=<slug>) -------------------- */
   function renderProjectDetail() {
     var root = document.querySelector('[data-detail="project"]');
@@ -535,6 +563,7 @@
     renderLists();
     setupProjectFilters();
     setupExperienceFilters();
+    setupSkillCloud();
     renderProjectDetail();
     var ct = document.getElementById("collapseToggle");
     if (ct) ct.addEventListener("click", toggleCollapsed);

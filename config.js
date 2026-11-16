@@ -176,6 +176,61 @@ window.SITE_CONFIG = {
       items: ["Reproducibility", "Docker", "AWS (ECS, S3)", "GitHub & Actions (CI/CD)", "APIs", "Unit testing", "CLI tooling (Make)"] },
   ],
 
+  /* --- Skill cloud --------------------------------------------------------
+     The filterable word-cloud banner at the top of the resume page.
+       level: 1-3 = your confidence, and also the SIZE in the cloud
+              (3 = biggest/strongest, 2 = medium, 1 = smallest). Best guesses
+              below — bump any up or down and the size changes with it.
+       cats:  which focus areas a skill belongs to. Click a filter chip and
+              only skills carrying that focus area stay visible. Spell them
+              exactly like the entries in `skillCloudFilters`.
+     ---------------------------------------------------------------------- */
+  skillCloudFilters: ["Data Science", "Data Analytics", "Data Engineer & Cloud", "GenAI & LLM"],
+
+  skillCloud: [
+    // Intentionally interleaved (not sorted by size) so the cloud reads like a
+    // cloud. Order here = display order; shuffle freely, it changes nothing else.
+    { name: "Python", level: 3, cats: ["Data Science", "Data Analytics", "Data Engineer & Cloud", "GenAI & LLM"] },
+    { name: "R", level: 2, cats: ["Data Science", "Data Analytics"] },
+    { name: "RAG", level: 3, cats: ["GenAI & LLM"] },
+    { name: "PySpark", level: 1, cats: ["Data Engineer & Cloud", "Data Science"] },
+    { name: "SQL", level: 3, cats: ["Data Analytics", "Data Engineer & Cloud", "Data Science"] },
+    { name: "Hypothesis testing", level: 2, cats: ["Data Science", "Data Analytics"] },
+    { name: "DuckDB", level: 2, cats: ["Data Engineer & Cloud", "Data Science"] },
+    { name: "Prompt engineering", level: 3, cats: ["GenAI & LLM"] },
+    { name: "Correlations", level: 1, cats: ["Data Analytics"] },
+    { name: "Pandas", level: 3, cats: ["Data Science", "Data Analytics"] },
+    { name: "Power BI", level: 2, cats: ["Data Analytics"] },
+    { name: "NLP", level: 2, cats: ["GenAI & LLM", "Data Science"] },
+    { name: "Excel", level: 3, cats: ["Data Analytics"] },
+    { name: "Parquet", level: 1, cats: ["Data Engineer & Cloud"] },
+    { name: "scikit-learn", level: 3, cats: ["Data Science"] },
+    { name: "Feature engineering", level: 2, cats: ["Data Science"] },
+    { name: "LangChain", level: 2, cats: ["GenAI & LLM"] },
+    { name: "Data storytelling", level: 3, cats: ["Data Analytics", "Data Science"] },
+    { name: "AWS", level: 1, cats: ["Data Engineer & Cloud"] },
+    { name: "XGBoost", level: 2, cats: ["Data Science"] },
+    { name: "LLM APIs", level: 3, cats: ["GenAI & LLM"] },
+    { name: "Jupyter", level: 2, cats: ["Data Science", "Data Analytics"] },
+    { name: "Cross-validation", level: 1, cats: ["Data Science"] },
+    { name: "Regression", level: 3, cats: ["Data Science", "Data Analytics"] },
+    { name: "Docker", level: 2, cats: ["Data Engineer & Cloud"] },
+    { name: "A/B testing", level: 2, cats: ["Data Analytics", "Data Science"] },
+    { name: "Exploratory Data Analysis", level: 3, cats: ["Data Science", "Data Analytics"] },
+    { name: "Quarto", level: 1, cats: ["Data Engineer & Cloud"] },
+    { name: "NumPy", level: 2, cats: ["Data Science"] },
+    { name: "Claude Code & Cowork", level: 3, cats: ["GenAI & LLM"] },
+    { name: "ETL pipeline design", level: 2, cats: ["Data Engineer & Cloud"] },
+    { name: "Clustering", level: 2, cats: ["Data Science"] },
+    { name: "Reproducibility", level: 1, cats: ["Data Engineer & Cloud"] },
+    { name: "PostgreSQL", level: 2, cats: ["Data Engineer & Cloud", "Data Analytics"] },
+    { name: "Matplotlib / Seaborn", level: 2, cats: ["Data Science", "Data Analytics"] },
+    { name: "GitHub Actions (CI/CD)", level: 2, cats: ["Data Engineer & Cloud"] },
+    { name: "APIs", level: 1, cats: ["Data Engineer & Cloud", "GenAI & LLM"] },
+    { name: "Data modeling", level: 2, cats: ["Data Engineer & Cloud"] },
+    { name: "Unit testing", level: 2, cats: ["Data Engineer & Cloud"] },
+  ],
+
   /* --- Projects -----------------------------------------------------------
      These power the Projects page, the Gallery, AND each project's own detail
      page (project.html?p=<slug>). Add a project here and its card, gallery

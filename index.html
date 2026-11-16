@@ -56,7 +56,16 @@
     </div>
   </div>
 
-  <script src="config.js"></script>
-  <script src="assets/app.js"></script>
+  <script>
+    /* Load config + app fresh on every visit so edits always show (no stale cache). */
+    (function () {
+      var v = "?v=" + Date.now();
+      ["config.js", "assets/app.js"].forEach(function (src) {
+        var s = document.createElement("script");
+        s.src = src + v; s.async = false;
+        document.head.appendChild(s);
+      });
+    })();
+  </script>
 </body>
 </html>
