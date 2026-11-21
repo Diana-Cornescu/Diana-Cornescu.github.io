@@ -23,7 +23,7 @@ window.SITE_CONFIG = {
     email: "DianaCornescu@Outlook.com",
     phone: "",                            // left blank — your resume omits it; add a number here if you want it public
 
-    tagline: "Data Scientist by training & Solution-Builder by instinct.",  // big hero headline
+    tagline: "Data Scientist by training, \nSolution builder by instinct.",  // big hero headline
     intro:
       "Recent Master of Data Science graduate with 1.5 years of industry experience across" +
       " data modeling and analytics. I build automated, " +
