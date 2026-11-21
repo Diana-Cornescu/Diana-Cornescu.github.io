@@ -1,0 +1,193 @@
+diff --git a/assets/app.js b/assets/app.js
+index 02daa4f..5f8e379 100644
+--- a/assets/app.js
++++ b/assets/app.js
+@@ -132,6 +132,25 @@
+         : '<div class="card is-static" data-tags="' + esc(dataTags) + '">' + inner + '</div>';
+     }).join("");
+ 
++    var gallery = document.querySelector('[data-list="gallery"]');
++    if (gallery) {
++      var tiles = [];
++      (cfg.projects || []).forEach(function (p) {
++        (p.images || []).forEach(function (img) {
++          tiles.push(
++            '<a class="tile" href="' + projHref(p) + '">' +
++              '<img class="tile-img" src="' + esc(img.src) + '" alt="' + esc(img.caption || p.title) + '" loading="lazy">' +
++              '<div class="tile-meta">' +
++                '<div class="tile-title">' + esc(img.caption || p.title) + '</div>' +
++                '<div class="tile-sub">' + esc(p.title) + (img.kind ? " · " + esc(img.kind) : "") + '</div>' +
++              '</div>' +
++            '</a>'
++          );
++        });
++      });
++      gallery.innerHTML = tiles.join("");
++    }
++
+   }
+ 
+   /* ---- 2b. Filter chips (projects by skill, experience by category) ------
+diff --git a/assets/styles.css b/assets/styles.css
+index abef267..ba93600 100644
+--- a/assets/styles.css
++++ b/assets/styles.css
+@@ -193,6 +193,19 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
+ .tags { display: flex; gap: 7px; margin-top: 13px; flex-wrap: wrap; }
+ .tag { font-size: 12px; color: var(--chip-text); background: var(--chip); padding: 4px 10px; border-radius: 6px; }
+ 
++/* ---- GALLERY tiles  (resize these without affecting the project cards) -- */
++.gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
++.tile {
++  display: block; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
++  background: var(--panel); margin: 0; transition: transform .15s, box-shadow .15s, border-color .15s;
++}
++.tile:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent); }
++.tile:hover .tile-title { color: var(--accent); }
++.tile-img { height: 150px; width: 100%; object-fit: cover; display: block; background: var(--chip); } /* <- gallery thumb height */
++.tile-meta { padding: 11px 13px; }
++.tile-title { font-size: 13.5px; font-weight: 600; }
++.tile-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
++
+ /* ---- RESUME (experience / education / skills) --------------------------- */
+ .timeline { display: flex; flex-direction: column; gap: 22px; }
+ .exp-head { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+@@ -288,7 +301,7 @@ a.contact-method:hover { transform: translateY(-2px); box-shadow: var(--shadow);
+   .container { padding: 32px 22px 70px; }
+   .contact-page { padding-top: 40px; }
+   .cards { grid-template-columns: 1fr; }   /* projects: single column on small screens */
+-  .stats, .contact-methods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
++  .stats, .gallery, .contact-methods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+   .hero-title { font-size: 32px; }
+   .contact-h1 { font-size: 30px; }
+ }
+diff --git a/contact.html b/contact.html
+index de71823..692c021 100644
+--- a/contact.html
++++ b/contact.html
+@@ -23,6 +23,7 @@
+     <nav class="topnav">
+       <a class="nav-item" href="index.html" aria-label="About"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="label">About</span></a>
+       <a class="nav-item" href="projects.html" aria-label="Projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span class="label">Projects</span></a>
++      <a class="nav-item" href="gallery.html" aria-label="Gallery"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span class="label">Gallery</span></a>
+       <a class="nav-item" href="resume.html" aria-label="Resume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg><span class="label">Resume</span></a>
+       <a class="nav-item active" href="contact.html" aria-label="Contact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span class="label">Contact</span></a>
+     </nav>
+diff --git a/design.html b/design.html
+index 34612b4..31d02f0 100644
+--- a/design.html
++++ b/design.html
+@@ -23,6 +23,7 @@
+     <nav class="topnav">
+       <a class="nav-item" href="index.html" aria-label="About"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="label">About</span></a>
+       <a class="nav-item" href="projects.html" aria-label="Projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span class="label">Projects</span></a>
++      <a class="nav-item" href="gallery.html" aria-label="Gallery"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span class="label">Gallery</span></a>
+       <a class="nav-item" href="resume.html" aria-label="Resume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg><span class="label">Resume</span></a>
+       <a class="nav-item" href="contact.html" aria-label="Contact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span class="label">Contact</span></a>
+     </nav>
+diff --git a/gallery.html b/gallery.html
+new file mode 100644
+index 0000000..f6f86a7
+--- /dev/null
++++ b/gallery.html
+@@ -0,0 +1,64 @@
++<!doctype html>
++<html lang="en">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <title>Diana Cornescu — Gallery</title>
++  <link rel="icon" href="assets/favicon.svg">
++  <link rel="preconnect" href="https://fonts.googleapis.com">
++  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
++  <link rel="stylesheet" href="assets/theme.css">
++  <link rel="stylesheet" href="assets/styles.css">
++  <script>(function(){try{var k=localStorage.getItem('diana-theme');var d=k?k==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
++</head>
++<body>
++
++  <!-- ===================== TOP NAV BAR (same on every page) ===================== -->
++  <header class="topbar">
++    <a class="brand" href="index.html" aria-label="Home">
++      <span class="avatar" data-field="initials">DC</span>
++      <span class="brand-name" data-field="name">Diana Cornescu</span>
++    </a>
++    <nav class="topnav">
++      <a class="nav-item" href="index.html" aria-label="About"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="label">About</span></a>
++      <a class="nav-item" href="projects.html" aria-label="Projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span class="label">Projects</span></a>
++      <a class="nav-item active" href="gallery.html" aria-label="Gallery"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span class="label">Gallery</span></a>
++      <a class="nav-item" href="resume.html" aria-label="Resume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg><span class="label">Resume</span></a>
++      <a class="nav-item" href="contact.html" aria-label="Contact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span class="label">Contact</span></a>
++    </nav>
++    <div class="top-actions">
++      <a class="ghost-btn" href="design.html" aria-label="Design"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.4"/><circle cx="17" cy="11" r="1.4"/><circle cx="8.5" cy="7" r="1.4"/><circle cx="6.5" cy="12" r="1.4"/><path d="M12 2a10 10 0 1 0 0 20 1.7 1.7 0 0 0 1.4-2.7A2 2 0 0 1 15 16h2c2 0 4-1 4-4 0-5-4-8-9-8z"/></svg><span class="label">Design</span></a>
++      <button class="ghost-btn" id="themeToggle" aria-label="Toggle dark mode"></button>
++      <a class="accent-btn" data-link="resume" href="assets/resume.pdf" aria-label="Download resume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span class="label">Resume</span></a>
++    </div>
++  </header>
++
++  <!-- ===================== PAGE CONTENT: Gallery =====================
++       Auto-built from the images across your projects in config.js. To add a
++       visual: drop the image in assets/img/ and add it to that project's
++       `images` list in config.js. Thumbnail size is .tile-img in styles.css.
++       ================================================================== -->
++  <div class="content">
++    <div class="container">
++      <h2 class="section-title">Gallery</h2>
++      <p class="muted-sub">Every chart and diagram from my projects, in one place.</p>
++      <!-- Tiles are built automatically from the images in your config.js
++           projects. Add an image to a project there and it appears here. -->
++      <div class="gallery" data-list="gallery"></div>
++    </div>
++  </div>
++
++  <script>
++    /* Load config + app fresh on every visit so edits always show (no stale cache). */
++    (function () {
++      var v = "?v=" + Date.now();
++      ["config.js", "assets/app.js"].forEach(function (src) {
++        var s = document.createElement("script");
++        s.src = src + v; s.async = false;
++        document.head.appendChild(s);
++      });
++    })();
++  </script>
++</body>
++</html>
+diff --git a/index.html b/index.html
+index 3868f2b..a7fb693 100644
+--- a/index.html
++++ b/index.html
+@@ -23,6 +23,7 @@
+     <nav class="topnav">
+       <a class="nav-item active" href="index.html" aria-label="About"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="label">About</span></a>
+       <a class="nav-item" href="projects.html" aria-label="Projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span class="label">Projects</span></a>
++      <a class="nav-item" href="gallery.html" aria-label="Gallery"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span class="label">Gallery</span></a>
+       <a class="nav-item" href="resume.html" aria-label="Resume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg><span class="label">Resume</span></a>
+       <a class="nav-item" href="contact.html" aria-label="Contact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span class="label">Contact</span></a>
+     </nav>
+diff --git a/projects.html b/projects.html
+index 15e1ebb..2b42ee3 100644
+--- a/projects.html
++++ b/projects.html
+@@ -23,6 +23,7 @@
+     <nav class="topnav">
+       <a class="nav-item" href="index.html" aria-label="About"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="label">About</span></a>
+       <a class="nav-item active" href="projects.html" aria-label="Projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span class="label">Projects</span></a>
++      <a class="nav-item" href="gallery.html" aria-label="Gallery"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span class="label">Gallery</span></a>
+       <a class="nav-item" href="resume.html" aria-label="Resume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg><span class="label">Resume</span></a>
+       <a class="nav-item" href="contact.html" aria-label="Contact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span class="label">Contact</span></a>
+     </nav>
+diff --git a/resume.html b/resume.html
+index 0de2687..d893dde 100644
+--- a/resume.html
++++ b/resume.html
+@@ -23,6 +23,7 @@
+     <nav class="topnav">
+       <a class="nav-item" href="index.html" aria-label="About"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="label">About</span></a>
+       <a class="nav-item" href="projects.html" aria-label="Projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span class="label">Projects</span></a>
++      <a class="nav-item" href="gallery.html" aria-label="Gallery"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span class="label">Gallery</span></a>
+       <a class="nav-item active" href="resume.html" aria-label="Resume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg><span class="label">Resume</span></a>
+       <a class="nav-item" href="contact.html" aria-label="Contact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span class="label">Contact</span></a>
+     </nav>

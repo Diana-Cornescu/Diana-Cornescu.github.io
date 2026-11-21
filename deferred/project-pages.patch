@@ -1,0 +1,221 @@
+diff --git a/assets/app.js b/assets/app.js
+index 02daa4f..9335603 100644
+--- a/assets/app.js
++++ b/assets/app.js
+@@ -111,25 +111,20 @@
+       '</div>';
+     }).join("");
+ 
+-    var ICON_EXT = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>';
++    var ARROW = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+     var projects = document.querySelector('[data-list="projects"]');
+     if (projects) projects.innerHTML = (cfg.projects || []).map(function (p) {
+       var tagList = p.tags || [];
+       var tags = tagList.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("");
+       var dataTags = tagList.map(function (t) { return String(t).toLowerCase(); }).join("|");
+-      // Cards link straight out to the project's GitHub (or live site if there's
+-      // no repo). A project with neither renders as a non-clickable card.
+-      var href = p.github || p.website || "";
+-      var inner =
++      return '<a class="card" href="' + projHref(p) + '" data-tags="' + esc(dataTags) + '">' +
+         '<div class="card-head"><div>' +
+           '<div class="card-title">' + esc(p.title) + '</div>' +
+           '<div class="card-type">' + esc(p.type || "") + '</div>' +
+-        '</div>' + (href ? '<span class="card-arrow">' + ICON_EXT + '</span>' : '') + '</div>' +
++        '</div><span class="card-arrow">' + ARROW + '</span></div>' +
+         '<p class="card-desc">' + esc(p.description || "") + '</p>' +
+-        '<div class="tags">' + tags + '</div>';
+-      return href
+-        ? '<a class="card" href="' + esc(href) + '" target="_blank" rel="noopener" data-tags="' + esc(dataTags) + '">' + inner + '</a>'
+-        : '<div class="card is-static" data-tags="' + esc(dataTags) + '">' + inner + '</div>';
++        '<div class="tags">' + tags + '</div>' +
++      '</a>';
+     }).join("");
+ 
+   }
+@@ -246,6 +241,55 @@
+     }, true);   // single-select: one focus area at a time
+   }
+ 
++  /* ---- 2c. Project detail page (project.html?p=<slug>) -------------------- */
++  function renderProjectDetail() {
++    var root = document.querySelector('[data-detail="project"]');
++    if (!root) return;
++    var want = (new URLSearchParams(location.search).get("p") || "").toLowerCase();
++    var p = (cfg.projects || []).filter(function (x) { return projSlug(x) === want; })[0];
++    if (!p) {
++      document.title = "Diana Cornescu — Project";
++      root.innerHTML = '<a class="back-link" href="projects.html">&larr; All projects</a>' +
++        '<p class="detail-lead">Sorry, that project could not be found. ' +
++        '<a class="inline-link" href="projects.html">Browse all projects</a>.</p>';
++      return;
++    }
++    document.title = "Diana Cornescu — " + p.title;
++    var d = p.details || {};
++    var ICON_EXT = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>';
++    var ICON_GH = '<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>';
++    var links = "";
++    if (p.website) links += '<a class="btn-primary" href="' + esc(p.website) + '" target="_blank" rel="noopener">' + ICON_EXT + ' Live demo</a>';
++    if (p.github)  links += '<a class="btn-secondary" href="' + esc(p.github) + '" target="_blank" rel="noopener">' + ICON_GH + ' GitHub</a>';
++    var tags = (p.tags || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join("");
++
++    function section(h, body) { return body ? '<h2 class="detail-h2">' + esc(h) + '</h2>' + body : ""; }
++    function para(t) { return t ? '<p class="detail-p">' + esc(t) + '</p>' : ""; }
++    function bullets(a) {
++      if (!a) return "";
++      if (!Array.isArray(a)) return para(a);
++      return '<ul class="bullets detail-bullets">' + a.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join("") + '</ul>';
++    }
++    var figs = (p.images || []).map(function (img) {
++      return '<figure class="detail-fig">' +
++        '<img src="' + esc(img.src) + '" alt="' + esc(img.caption || p.title) + '" loading="lazy">' +
++        (img.caption ? '<figcaption>' + esc(img.caption) + (img.kind ? " &middot; " + esc(img.kind) : "") + '</figcaption>' : "") +
++      '</figure>';
++    }).join("");
++
++    root.innerHTML =
++      '<a class="back-link" href="projects.html">&larr; All projects</a>' +
++      '<p class="hero-eyebrow">' + esc(p.type || "Project") + '</p>' +
++      '<h1 class="detail-title">' + esc(p.title) + '</h1>' +
++      (d.summary ? '<p class="detail-lead">' + esc(d.summary) + '</p>' : "") +
++      (links ? '<div class="cta-row">' + links + '</div>' : "") +
++      (tags ? '<div class="tags detail-tags">' + tags + '</div>' : "") +
++      section("Why it matters", para(d.why)) +
++      section("What I did", bullets(d.what)) +
++      section("The result", para(d.result)) +
++      (figs ? '<div class="detail-figs">' + figs + '</div>' : "");
++  }
++
+   /* ---- 3a. Dark / light -------------------------------------------------- */
+   var THEME_KEY = "diana-theme";
+   var mql = window.matchMedia("(prefers-color-scheme: dark)");
+@@ -479,6 +523,7 @@
+     setupProjectFilters();
+     setupExperienceFilters();
+     setupSkillCloud();
++    renderProjectDetail();
+     var ct = document.getElementById("collapseToggle");
+     if (ct) ct.addEventListener("click", toggleCollapsed);
+     var tt = document.getElementById("themeToggle");
+diff --git a/assets/styles.css b/assets/styles.css
+index abef267..e11fa39 100644
+--- a/assets/styles.css
++++ b/assets/styles.css
+@@ -183,8 +183,6 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
+   transition: box-shadow .15s, transform .15s;
+ }
+ .card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+-.card.is-static { cursor: default; }
+-.card.is-static:hover { transform: none; box-shadow: none; }
+ .card-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+ .card-title { font-size: 17px; font-weight: 600; margin-bottom: 7px; }
+ .card-type { font-size: 12.5px; color: var(--muted); }
+@@ -273,6 +271,24 @@ a.contact-method:hover { transform: translateY(-2px); box-shadow: var(--shadow);
+ .cm-label { font-size: 12.5px; color: var(--muted); }
+ .cm-value { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+ 
++/* ---- PROJECT DETAIL PAGE (project.html — reads like a short blog post) --- */
++.project-detail { max-width: 820px; }   /* narrower than list pages for comfortable reading */
++.back-link { display: inline-block; font-size: 13.5px; color: var(--muted); margin-bottom: 22px; }
++.back-link:hover { color: var(--accent); }
++.inline-link { color: var(--accent); font-weight: 500; }
++.detail-title { font-size: 34px; line-height: 1.14; font-weight: 700; letter-spacing: -.02em; margin: 6px 0 0; }
++.detail-lead { margin: 18px 0 0; font-size: 18px; line-height: 1.6; color: var(--muted); }
++.project-detail .cta-row { margin-top: 24px; }
++.detail-tags { margin-top: 20px; }
++.detail-h2 { font-size: 18px; font-weight: 700; margin: 34px 0 10px; }
++.detail-p { font-size: 15.5px; line-height: 1.7; color: var(--text); margin: 0; }
++.detail-bullets { margin: 10px 0 0; padding-left: 20px; }
++.detail-bullets li { font-size: 15.5px; line-height: 1.65; color: var(--text); margin-bottom: 7px; }
++.detail-figs { margin-top: 36px; display: flex; flex-direction: column; gap: 20px; }
++.detail-fig { margin: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--panel); }
++.detail-fig img { display: block; width: 100%; height: auto; background: var(--chip); }
++.detail-fig figcaption { font-size: 13px; color: var(--muted); padding: 11px 14px; }
++
+ /* ---- Responsive --------------------------------------------------------- */
+ @media (max-width: 960px) {
+   .resume-cols { grid-template-columns: 1fr; }   /* stack experience over education */
+diff --git a/project.html b/project.html
+new file mode 100644
+index 0000000..19a4eb4
+--- /dev/null
++++ b/project.html
+@@ -0,0 +1,63 @@
++<!doctype html>
++<html lang="en">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <title>Diana Cornescu — Project</title>
++  <link rel="icon" href="assets/favicon.svg">
++  <link rel="preconnect" href="https://fonts.googleapis.com">
++  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
++  <link rel="stylesheet" href="assets/theme.css">
++  <link rel="stylesheet" href="assets/styles.css">
++  <script>(function(){try{var k=localStorage.getItem('diana-theme');var d=k?k==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
++</head>
++<body>
++
++  <!-- ===================== TOP NAV BAR (same on every page) ===================== -->
++  <header class="topbar">
++    <a class="brand" href="index.html" aria-label="Home">
++      <span class="avatar" data-field="initials">DC</span>
++      <span class="brand-name" data-field="name">Diana Cornescu</span>
++    </a>
++    <nav class="topnav">
++      <a class="nav-item" href="index.html" aria-label="About"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="label">About</span></a>
++      <a class="nav-item active" href="projects.html" aria-label="Projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span class="label">Projects</span></a>
++      <a class="nav-item" href="gallery.html" aria-label="Gallery"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span class="label">Gallery</span></a>
++      <a class="nav-item" href="resume.html" aria-label="Resume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg><span class="label">Resume</span></a>
++      <a class="nav-item" href="contact.html" aria-label="Contact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span class="label">Contact</span></a>
++    </nav>
++    <div class="top-actions">
++      <a class="ghost-btn" href="design.html" aria-label="Design"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.4"/><circle cx="17" cy="11" r="1.4"/><circle cx="8.5" cy="7" r="1.4"/><circle cx="6.5" cy="12" r="1.4"/><path d="M12 2a10 10 0 1 0 0 20 1.7 1.7 0 0 0 1.4-2.7A2 2 0 0 1 15 16h2c2 0 4-1 4-4 0-5-4-8-9-8z"/></svg><span class="label">Design</span></a>
++      <button class="ghost-btn" id="themeToggle" aria-label="Toggle dark mode"></button>
++      <a class="accent-btn" data-link="resume" href="assets/resume.pdf" aria-label="Download resume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span class="label">Resume</span></a>
++    </div>
++  </header>
++
++  <!-- ===================== PAGE CONTENT: Project detail =====================
++       Rendered from config.js by app.js, based on the ?p=<slug> in the URL.
++       The cards on projects.html and the gallery tiles link here. To change a
++       project's write-up, edit its `details` block in config.js.
++       ==================================================================== -->
++  <div class="content">
++    <div class="container project-detail">
++      <article data-detail="project">
++        <!-- app.js fills this in from the project's slug -->
++        <p class="detail-lead">Loading project…</p>
++      </article>
++    </div>
++  </div>
++
++  <script>
++    /* Load config + app fresh on every visit so edits always show (no stale cache). */
++    (function () {
++      var v = "?v=" + Date.now();
++      ["config.js", "assets/app.js"].forEach(function (src) {
++        var s = document.createElement("script");
++        s.src = src + v; s.async = false;
++        document.head.appendChild(s);
++      });
++    })();
++  </script>
++</body>
++</html>
+diff --git a/projects.html b/projects.html
+index 15e1ebb..6178046 100644
+--- a/projects.html
++++ b/projects.html
+@@ -46,8 +46,8 @@
+            chip appears here on its own. One toolkit filters at a time. -->
+       <div class="filter-label">Filter by toolkit</div>
+       <div class="filterbar" data-list="project-filters"></div>
+-      <!-- Cards are built from your projects in config.js and link out to each
+-           project's GitHub repo (or live site). Edit them in config.js. -->
++      <!-- Cards are built from your projects in config.js and link to each
++           project's own detail page (project.html). Edit them in config.js. -->
+       <div class="cards" data-list="projects"></div>
+     </div>
+   </div>

@@ -1,0 +1,15 @@
+/* Paste this into assets/theme.css to make it the default for everyone. */
+:root {
+  --bg: #faf2f0; --panel: #fefbfb; --side: #fefbfb;
+  --border: #dedede; --text: #141414; --muted: #303030;
+  --chip: #F3F4F6; --chip-text: #4B5563;
+  --accent: #bf3d3d; --accent-contrast: #FFFFFF; --active-bg: #efd8d1;
+  --shadow: 0 8px 24px rgba(15, 23, 42, .08);
+}
+html[data-theme="dark"] {
+  --bg: #1c1c1c; --panel: #222222; --side: #222222;
+  --border: #3a3a3a; --text: #faf2f0; --muted: #e1e0e0;
+  --chip: #1E242D; --chip-text: #8FA0B4;
+  --accent: #bf3d3d; --accent-contrast: #FFFFFF; --active-bg: #d59c8b;
+  --shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}
