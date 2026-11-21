@@ -23,14 +23,13 @@ window.SITE_CONFIG = {
     email: "DianaCornescu@Outlook.com",
     phone: "",                            // left blank — your resume omits it; add a number here if you want it public
 
-    tagline: "I turn messy data into decisions people can act on.",  // big hero headline
+    tagline: "Data Scientist by training," + "Solution-Builder by instinct.",  // big hero headline
     intro:
-      "Recent Master of Data Science graduate (UBC, 93% average) with 1.5 years of " +
-      "industry experience across analytics and data engineering. I build automated, " +
-      "well-documented pipelines and predictive models that hold up on messy, real-world " +
-      "data — from a 1.6M-product RAG system to validation stages that catch data drift " +
-      "before it reaches a report. I like turning ambiguous business questions into tracked " +
-      "technical work and clear, defensible recommendations.",
+      "Recent Master of Data Science graduate with 1.5 years of industry experience across" +
+      " data modeling and analytics. I build automated, " +
+      "well-documented pipelines and predictive models that hold up on messy & real-world " +
+      "data. I like genuinely enjoy digging into complex problems where solutions save time," +
+      " money, or energy. Pride in my work is what drives me.",
 
     social: {
       github: "https://github.com/Diana-Cornescu",
@@ -77,14 +76,14 @@ window.SITE_CONFIG = {
       start: "May 2026",
       end: "Jun 2026",
       bullets: [
-        { text: "Built a unified success KPI merging two previously incompatible scoring sources into one outcome target, and used it to train 3+ supervised models (OLS / ridge / lasso regression, mixed-effects, decision trees).",
-          cats: ["Data Science"] },
+        { text: "Developed a unified success KPI that merges two previously incompatible scoring sources into a single outcome target, applying domain-specific logic to adjust for composition changes, and used it to train 3+ supervised models (OLS / ridge / lasso regression, mixed-effects, and decision trees).",
+          cats: ["Data Science", "Data Engineer & Cloud"] },
         { text: "Embedded a validation stage that detects and logs score-denominator drift, plus a naming-convention contract that selects columns by prefix/suffix — so new reporting years are accepted without any code changes.",
           cats: ["Data Engineer & Cloud", "Initiative"] },
         { text: "Identified 4 meaningful clusters (PCA, K-means, UMAP) across 140 entities and validated consistency across 12 time/source combinations; presented results to the client VP and partner firm.",
           cats: ["Data Science", "Non-Technical Communication"] },
         { text: "Automated model selection end to end (imputation, scaling, PCA to 95% explained variance, silhouette-based clustering) so non-technical users can run scripts and get results without touching code.",
-          cats: ["Data Engineer & Cloud", "Initiative"] },
+          cats: ["Data Science", "Data Engineer & Cloud", "Initiative"] },
       ],
     },
     {
@@ -120,24 +119,24 @@ window.SITE_CONFIG = {
     {
       degree: "Master of Data Science",
       org: "University of British Columbia",
-      start: "2025",
-      end: "2026",
+      start: "Sep. 2025",
+      end: "Jun. 2026",
       note: "93% cumulative average. 1st place (team) in a program-wide Datathon.",
+    },
+   {
+      degree: "MIT MicroMasters — Machine Learning with Python",
+      org: "MITx (Remote)",
+      start: "Jun. 2024",
+      end: "Jun. 2024",
+      note: "From Linear Models to Deep Learning.",
     },
     {
       degree: "Bachelor of Commerce (Co-op), Economics Minor",
       org: "Toronto Metropolitan University",
-      start: "2019",
-      end: "2024",
+      start: "Sep. 2019",
+      end: "Apr. 2024",
       note: "CGPA 4.0/4.3.",
-    },
-    {
-      degree: "MIT MicroMasters — Machine Learning with Python",
-      org: "MITx (Remote)",
-      start: "",
-      end: "2024",
-      note: "From Linear Models to Deep Learning.",
-    },
+    }
   ],
 
   /* --- Skills -------------------------------------------------------------
