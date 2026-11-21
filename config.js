@@ -128,7 +128,7 @@ window.SITE_CONFIG = {
     {
       degree: "MIT MicroMasters — Machine Learning with Python",
       org: "MITx (Remote)",
-      start: "",
+      start: "Jun 2024",
       end: "Jun 2024",
       note: "From Linear Models to Deep Learning.",
     },
