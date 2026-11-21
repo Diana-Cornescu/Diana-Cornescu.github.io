@@ -23,12 +23,12 @@ window.SITE_CONFIG = {
     email: "DianaCornescu@Outlook.com",
     phone: "",                            // left blank — your resume omits it; add a number here if you want it public
 
-    tagline: "Data Scientist by training," + "Solution-Builder by instinct.",  // big hero headline
+    tagline: "Data Scientist by training & Solution-Builder by instinct.",  // big hero headline
     intro:
       "Recent Master of Data Science graduate with 1.5 years of industry experience across" +
       " data modeling and analytics. I build automated, " +
       "well-documented pipelines and predictive models that hold up on messy & real-world " +
-      "data. I like genuinely enjoy digging into complex problems where solutions save time," +
+      "data. I genuinely enjoy digging into complex problems where solutions save time," +
       " money, or energy. Pride in my work is what drives me.",
 
     social: {
@@ -77,13 +77,15 @@ window.SITE_CONFIG = {
       end: "Jun 2026",
       bullets: [
         { text: "Developed a unified success KPI that merges two previously incompatible scoring sources into a single outcome target, applying domain-specific logic to adjust for composition changes, and used it to train 3+ supervised models (OLS / ridge / lasso regression, mixed-effects, and decision trees).",
-          cats: ["Data Science", "Data Engineer & Cloud"] },
-        { text: "Embedded a validation stage that detects and logs score-denominator drift, plus a naming-convention contract that selects columns by prefix/suffix — so new reporting years are accepted without any code changes.",
+          cats: ["Data Science"] },
+        { text: "Ensured long-term interpretability for reliable year-over-year use by embedding a validation stage that detects and logs score-denominator drift, as well as a naming-convention contract that selects columns by prefix/suffix to accept new reporting years without any code changes.",
           cats: ["Data Engineer & Cloud", "Initiative"] },
-        { text: "Identified 4 meaningful clusters (PCA, K-means, UMAP) across 140 entities and validated consistency across 12 time/source combinations; presented results to the client VP and partner firm.",
+        { text: "Ran weekly meetings with a client VP to translate business requirements into tracked technical requirements, and during handoff provided results to stakeholders with supplementary documentation on methodology, scripts, dependencies, and limitations.",
+          cats: ["Non-Technical Communication"] },
+        { text: "Presented analysis results to client VP and partner firm after identifying 4 meaningful clusters (PCA, K-means, UMAP) across 140 entities to enable equitable comparisons, ensuring robust results by validating consistency across 12 combinations of time and source type; each script run writes a self-describing log so results trace back to their settings.",
           cats: ["Data Science", "Non-Technical Communication"] },
-        { text: "Automated model selection end to end (imputation, scaling, PCA to 95% explained variance, silhouette-based clustering) so non-technical users can run scripts and get results without touching code.",
-          cats: ["Data Science", "Data Engineer & Cloud", "Initiative"] },
+        { text: "Replaced a manual tuning step and automated model selection end to end: imputing, scaling, reducing dimensionality to a 95% explained variance threshold with PCA, and selecting the best clustering by silhouette score so non-technical users can run scripts and obtain results without touching code.",
+          cats: ["Data Engineer & Cloud", "Initiative"] },
       ],
     },
     {
@@ -92,11 +94,11 @@ window.SITE_CONFIG = {
       start: "May 2023",
       end: "Dec 2023",
       bullets: [
-        { text: "Cut recurring monthly reporting time by 50% (3 hr → 1.5 hr) by building a documented Python automation script and streamlining manual processes.",
+        { text: "Reduced the time and variability in recurring reporting by streamlining manual processes, improving consistency while cutting processing time by 50% (3 hr to 1.5 hr) by self-developing a Python automation script with documentation.",
           cats: ["Data Engineer & Cloud", "Initiative"] },
-        { text: "Added a data-quality validation step comparing entity IDs across 3 source systems, surfacing and categorizing 1,200+ recurring discrepancies for upstream correction.",
+        { text: "Developed a data-quality validation step when automating a monthly source-merge process, comparing entity IDs across 3 source systems to surface and categorize 1,200+ recurring discrepancies for upstream correction.",
           cats: ["Data Analytics", "Data Engineer & Cloud"] },
-        { text: "Documented 2 business processes to onboard incoming analysts — at a high level for context and a lower level for the programmatic logic and assumptions.",
+        { text: "Documented 2 business processes to train and onboard incoming talent, at a high level to give context and at a lower level to outline the logic and assumptions used programmatically.",
           cats: ["Non-Technical Communication"] },
       ],
     },
@@ -106,9 +108,9 @@ window.SITE_CONFIG = {
       start: "May 2022",
       end: "Dec 2022",
       bullets: [
-        { text: "Quantified portfolio financial risk in a solo-built dashboard (10+ visualizations, Excel/Power BI), surfacing quarterly exposure and recovering $3,000+ in missed revenue.",
+        { text: "Quantified portfolio financial risk by aggregating scattered contract terms into a solo-built dashboard (10+ visualizations, Excel/Power BI), surfacing quarterly portfolio exposure and recovering $3,000+ in missed revenue.",
           cats: ["Data Analytics", "Initiative"] },
-        { text: "Forecast neighbourhood population density with multi-linear regression on 3+ data sources to surface advantageous investment locations 5–10 years ahead of price markups.",
+        { text: "Identified strategic opportunities 5-10 years ahead of time by using ETL on 3+ data sources and forecasting neighborhood population density with multi-linear regression modeling to surface advantageous investment locations before price markups.",
           cats: ["Data Science", "Data Analytics"] },
       ],
     },
@@ -119,24 +121,24 @@ window.SITE_CONFIG = {
     {
       degree: "Master of Data Science",
       org: "University of British Columbia",
-      start: "Sep. 2025",
-      end: "Jun. 2026",
+      start: "Sep 2025",
+      end: "Jun 2026",
       note: "93% cumulative average. 1st place (team) in a program-wide Datathon.",
     },
-   {
+    {
       degree: "MIT MicroMasters — Machine Learning with Python",
       org: "MITx (Remote)",
-      start: "Jun. 2024",
-      end: "Jun. 2024",
+      start: "",
+      end: "Jun 2024",
       note: "From Linear Models to Deep Learning.",
     },
     {
       degree: "Bachelor of Commerce (Co-op), Economics Minor",
       org: "Toronto Metropolitan University",
-      start: "Sep. 2019",
-      end: "Apr. 2024",
+      start: "Sep 2019",
+      end: "Apr 2024",
       note: "CGPA 4.0/4.3.",
-    }
+    },
   ],
 
   /* --- Skills -------------------------------------------------------------
