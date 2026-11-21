@@ -1,0 +1,88 @@
+diff --git a/assets/app.js b/assets/app.js
+index 02daa4f..d49d5ff 100644
+--- a/assets/app.js
++++ b/assets/app.js
+@@ -132,6 +132,28 @@
+         : '<div class="card is-static" data-tags="' + esc(dataTags) + '">' + inner + '</div>';
+     }).join("");
+ 
++    // Auto-scrolling horizontal image band (front page only). Built from the
++    // same project images; each links to its project page. The set is doubled
++    // so the CSS marquee can loop seamlessly (it slides exactly one set width).
++    var strip = document.querySelector('[data-strip="gallery"]');
++    if (strip) {
++      var items = [];
++      (cfg.projects || []).forEach(function (p) {
++        (p.images || []).forEach(function (img) {
++          items.push(
++            '<a class="strip-item" href="' + projHref(p) + '" title="' + esc(p.title) + '" aria-label="' + esc(p.title) + '">' +
++              '<img src="' + esc(img.src) + '" alt="' + esc(img.caption || p.title) + '" loading="lazy">' +
++            '</a>'
++          );
++        });
++      });
++      if (items.length) {
++        strip.innerHTML = items.join("") + items.join("");   // doubled for a seamless loop
++      } else {
++        var band = strip.closest(".strip");
++        if (band) band.style.display = "none";
++      }
++    }
+   }
+ 
+   /* ---- 2b. Filter chips (projects by skill, experience by category) ------
+diff --git a/assets/styles.css b/assets/styles.css
+index abef267..1b50131 100644
+--- a/assets/styles.css
++++ b/assets/styles.css
+@@ -156,6 +156,24 @@ body.collapsed .ghost-btn, body.collapsed .accent-btn { justify-content: center;
+ .stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+ .stat-label { font-size: 13px; color: var(--muted); margin-top: 3px; }
+ 
++/* ---- Auto-scrolling image band (front page, above the hero) -------------
++   Full-width marquee built from every project image. The set is doubled in
++   the markup, so sliding the track by exactly half its width (-50%) loops
++   seamlessly. Hover to pause; motion is disabled for reduced-motion users. */
++.strip { overflow: hidden; background: var(--panel); border-bottom: 1px solid var(--border); padding: 16px 0; }
++.strip-track { display: flex; width: max-content; animation: strip-scroll 60s linear infinite; }
++.strip:hover .strip-track { animation-play-state: paused; }
++.strip-item {
++  flex: none; width: 240px; height: 150px; margin-right: 14px;
++  border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--chip);
++}
++.strip-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s ease; }
++.strip-item:hover img { transform: scale(1.04); }
++@keyframes strip-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
++@media (prefers-reduced-motion: reduce) {
++  .strip-track { animation: none; overflow-x: auto; width: 100%; }
++}
++
+ /* ---- PROJECT cards  (resize these without affecting the gallery) -------- */
+ .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+ 
+@@ -291,6 +309,7 @@ a.contact-method:hover { transform: translateY(-2px); box-shadow: var(--shadow);
+   .stats, .contact-methods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+   .hero-title { font-size: 32px; }
+   .contact-h1 { font-size: 30px; }
++  .strip-item { width: 190px; height: 118px; }
+ }
+ @media (max-width: 620px) {
+   .skillcat { grid-template-columns: 1fr; gap: 2px; }   /* stack category over its list */
+diff --git a/index.html b/index.html
+index 3868f2b..b6614f4 100644
+--- a/index.html
++++ b/index.html
+@@ -33,6 +33,13 @@
+     </div>
+   </header>
+ 
++  <!-- ===================== SCROLLING IMAGE BAND (front page only) =====================
++       Auto-scrolls through every project image; each links to its project page.
++       Filled by app.js from config.js. Styling: .strip in styles.css. -->
++  <section class="strip" aria-label="Project image gallery">
++    <div class="strip-track" data-strip="gallery"></div>
++  </section>
++
+   <!-- ===================== PAGE CONTENT: About ===================== -->
+   <div class="content">
+     <div class="container">
